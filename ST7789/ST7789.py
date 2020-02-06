@@ -6,8 +6,7 @@ import numpy as np
 from PIL import Image
 from PIL import ImageDraw
 
-import Adafruit_GPIO as GPIO
-import Adafruit_GPIO.SPI as SPI
+from pyA20.gpio import gpio
 
 SPI_CLOCK_HZ = 40000000 # 40 MHz
 
@@ -136,7 +135,7 @@ def image_to_data(image):
 class ST7789(object):
     """Representation of an ST7789 IPS LCD."""
 
-    def __init__(self, spi, mode=3, rst=27, dc=25, led=24, gpio=None, width=ST7789_TFTWIDTH,
+    def __init__(self, spi, mode=3, rst=27, dc=25, led=24, width=ST7789_TFTWIDTH,
         height=ST7789_TFTHEIGHT):
         """Create an instance of the display using SPI communication.  Must
         provide the GPIO pin number for the D/C pin and the SPI driver.  Can
@@ -151,36 +150,50 @@ class ST7789(object):
         self.width = width
         self.height = height
         if self._gpio is None:
-            self._gpio = GPIO.get_platform_gpio()
+            self._gpio = gpio
+
+        self._gpio.init()
         # Set DC as output.
-        self._gpio.setup(dc, GPIO.OUT)
+        self._gpio.setcfg(dc, gpio.OUTPUT)
+
         # Setup reset as output (if provided).
         if rst is not None:
-            self._gpio.setup(rst, GPIO.OUT)
+            self._gpio.setcfg(rst, gpio.OUTPUT)
+
+        self._gpio.output(self._rst, 1)
+        self._gpio.output(self._dc, 1)
+
         # Turn on the backlight LED
-        self._gpio.setup(led, GPIO.OUT)
-        self._gpio.setup(led, GPIO.HIGH)
+        #self._gpio.setup(led, GPIO.OUT)
+        #self._gpio.setup(led, GPIO.HIGH)
         # Set SPI to mode 0, MSB first.
-        spi.set_mode(mode)
-        spi.set_bit_order(SPI.MSBFIRST)
-        spi.set_clock_hz(SPI_CLOCK_HZ)
+        #spi.set_mode(mode)
+        #spi.set_bit_order(SPI.MSBFIRST)
+        #spi.set_clock_hz(SPI_CLOCK_HZ)
         # Create an image buffer.
         self.buffer = Image.new('RGB', (width, height))
 
-    def send(self, data, is_data=True, chunk_size=4096):
+    def send(self, data, is_data=True, chunk_size=48):
         """Write a byte or array of bytes to the display. Is_data parameter
         controls if byte should be interpreted as display data (True) or command
         data (False).  Chunk_size is an optional size of bytes to write in a
         single SPI transaction, with a default of 4096.
         """
         # Set DC low for command, high for data.
-        self._gpio.output(self._dc, is_data)
+
+        if(is_data==True):
+            self._gpio.output(self._dc, 1)
+        else:
+            self._gpio.output(self._dc, 0)
+
         # Convert scalar argument to list so either can be passed as parameter.
         if isinstance(data, numbers.Number):
             data = [data & 0xFF]
         # Write data a chunk at a time.
         for start in range(0, len(data), chunk_size):
             end = min(start+chunk_size, len(data))
+            tempData = data[start:end]
+            #print(tempData)
             self._spi.write(data[start:end])
 
     def command(self, data):
@@ -194,11 +207,11 @@ class ST7789(object):
     def reset(self):
         """Reset the display, if reset pin is connected."""
         if self._rst is not None:
-            self._gpio.set_high(self._rst)
+            self._gpio.output(self._rst, 1)
             time.sleep(0.100)
-            self._gpio.set_low(self._rst)
+            self._gpio.output(self._rst, 0)
             time.sleep(0.100)
-            self._gpio.set_high(self._rst)
+            self._gpio.output(self._rst, 1)
             time.sleep(0.100)
 
     def _init(self):
