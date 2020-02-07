@@ -196,59 +196,32 @@ class ST7789(object):
             self._gpio.output(self._rst, 1)
             time.sleep(0.100)
 
+    def SPI_TRANSFER(self,arg1, *argv):
+        self.command(arg1)  # Column addr set
+        for arg in argv:
+            self.data(arg)
+
+
+
     def _init(self):
-        # Initialize the display.
+        self.SPI_TRANSFER(0xB2, 0xc, 0xc, 0, 0x33, 0x33)
+        self.SPI_TRANSFER(0xB7, 0x35)
+        self.SPI_TRANSFER(0xBb, 0x19)
+        self.SPI_TRANSFER(0xc0, 0x2c)
+        self.SPI_TRANSFER(0xc2, 0x01)
+        self.SPI_TRANSFER(0xc3, 0x12)
+        self.SPI_TRANSFER(0xc4, 0x20)
+        self.SPI_TRANSFER(0xc6, 0x0f)
+        self.SPI_TRANSFER(0xd0, 0xa4, 0xa1)
+        self.SPI_TRANSFER(0xe0, 0xd0, 0x04, 0x0d, 0x11, 0x13, 0x2b, 0x3f, 0x54, 0x4c, 0x18, 0x0d, 0x0b, 0x1f, 0x23)
+        self.SPI_TRANSFER(0xe1, 0xd0, 0x04, 0x0c, 0x11, 0x13, 0x2c, 0x3f, 0x44, 0x51, 0x2f, 0x1f, 0x1f, 0x20, 0x23)
+        self.SPI_TRANSFER(0x21)
+        self.SPI_TRANSFER(0x11)
+        self.SPI_TRANSFER(0x29)
+        time.sleep( 1)
 
-        #self.command(ST7789_SWRESET)    # Software reset
-        time.sleep(0.150)               # delay 150 ms
 
-        self.command(ST7789_MADCTL)
-        self.data(0x70)
 
-        self.command(ST7789_FRMCTR2)    # Frame rate ctrl - idle mode
-        self.data(0x0C)
-        self.data(0x0C)
-        self.data(0x00)
-        self.data(0x33)
-        self.data(0x33)
-
-        self.command(ST7789_COLMOD)
-        self.data(0x05)
-
-        self.command(ST7789_GCTRL)
-        self.data(0x14)
-
-        self.command(ST7789_VCOMS)
-        self.data(0x37)
-
-        self.command(ST7789_LCMCTRL)    # Power control
-        self.data(0x2C)
-
-        self.command(ST7789_VDVVRHEN)   # Power control
-        self.data(0x01)
-
-        self.command(ST7789_VRHS)       # Power control
-        self.data(0x12)
-
-        self.command(ST7789_VDVS)       # Power control
-        self.data(0x20)
-
-        self.command(0xD0)
-        self.data(0xA4)
-        self.data(0xA1)
-
-        #self.command(ST7789_FRCTRL2)
-        #self.data(0x0F)
-
-        #if self._invert:
-            #self.command(ST7789_INVON)   # Invert display
-        #else:
-            #self.command(ST7789_INVOFF)  # Don't invert display
-
-        self.command(ST7789_SLPOUT)
-
-        self.command(ST7789_DISPON)     # Display on
-        time.sleep(0.100)               # 100 ms
 
     def begin(self):
         """Set up the display
