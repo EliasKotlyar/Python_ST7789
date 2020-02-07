@@ -62,4 +62,4 @@ image = image.resize((WIDTH, HEIGHT))
 # Draw the image on the display hardware.
 print('Drawing image')
 
-#disp.display(image)
+disp.display(image)

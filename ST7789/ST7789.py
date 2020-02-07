@@ -22,6 +22,8 @@ import numbers
 import time
 import numpy as np
 
+import struct
+
 from pyA20.gpio import gpio
 
 
@@ -146,7 +148,7 @@ class ST7789(object):
         self.reset()
         self._init()
 
-    def send(self, data, is_data=True, chunk_size=69):
+    def send(self, data, is_data=True, chunk_size=60):
         """Write a byte or array of bytes to the display. Is_data parameter
         controls if byte should be interpreted as display data (True) or command
         data (False).  Chunk_size is an optional size of bytes to write in a
@@ -199,39 +201,77 @@ class ST7789(object):
             time.sleep(0.100)
 
     def _init(self):
-        # Initialize the display.
-         # Sleep Out Command
-        self.command(0x11)
-        time.sleep(0.120)
-        # COLMOD: Pixel Format Set
-        self.command(0x3A)
-        self.data(0x05)
-        time.sleep(0.020)
-
-        # MadCTL
         self.command(0x36)
-        self.data(0x70)
-        time.sleep(0.010)
+        self.data([0x70])
 
-        # Enable Gamma:
-        self.command(0xBA)
-        self.data(0x04)
-        time.sleep(0.010)
+        self.command(0x3A)
+        self.data([0x05])
 
-        # Invert Colors:
+        self.command(0xB2)
+        self.data([0x0C, 0x0C, 0x00, 0x33, 0x33])
+
+        self.command(0xB7)
+        self.data([0x35])
+
+        self.command(0xBB)
+        self.data([0x19])
+
+        self.command(0xC0)
+        self.data([0x2C])
+
+        self.command(0xC2)
+        self.data([0x01])
+
+        self.command(0xC3)
+        self.data([0x12])
+
+        self.command(0xC4)
+        self.data([0x20])
+
+        self.command(0xC6)
+        self.data([0x0F])
+
+        self.command(0xD0)
+        self.data([0xA4, 0xA1])
+
+        self.command(0xE0)
+        self.data([0xD0])
+        self.data([0x04])
+        self.data([0x0D])
+        self.data([0x11])
+        self.data([0x13])
+        self.data([0x2B])
+        self.data([0x3F])
+        self.data([0x54])
+        self.data([0x4C])
+        self.data([0x18])
+        self.data([0x0D])
+        self.data([0x0B])
+        self.data([0x1F])
+        self.data([0x23])
+
+        self.command(0xE1)
+        self.data([0xD0])
+        self.data([0x04])
+        self.data([0x0C])
+        self.data([0x11])
+        self.data([0x13])
+        self.data([0x2C])
+        self.data([0x3F])
+        self.data([0x44])
+        self.data([0x51])
+        self.data([0x2F])
+        self.data([0x1F])
+        self.data([0x1F])
+        self.data([0x20])
+        self.data([0x23])
+
         self.command(0x21)
 
-        # Partial off:
-        self.command(0x13)
+        self.command(0x11)
 
-        # Swap Addresse
-        #self.command(0x37)
-        #self.data(0)
-        #self.data(320-240)
+        self.command(0x29)
 
-
-        self.command(ST7789_DISPON)     # Display on
-        time.sleep(0.100)               # 100 ms
 
     def begin(self):
         """Set up the display
@@ -240,6 +280,7 @@ class ST7789(object):
 
         """
         pass
+
 
     def set_window(self, x0=0, y0=0, x1=None, y1=None):
         """Set the pixel address window for proceeding drawing commands. x0 and
@@ -273,21 +314,21 @@ class ST7789(object):
         self.command(ST7789_RAMWR)       # write to RAM
 
     def display(self, image):
-        """Write the provided image to the hardware.
+      w, h = 240, 240
+      self.set_window(0, 0, w, h)
 
-        :param image: Should be RGB format and the same dimensions as the display hardware.
+      #packed_image = BitArray().join(BitArray(uint=x & 0x00111111, length=6) for x in image.tobytes()).tobytes()
 
-        """
-        # Set address bounds to entire display.
-        self.set_window()
-        # Convert image to array of 18bit 666 RGB data bytes.
-        # Unfortunate that this copy has to occur, but the SPI byte writing
-        # function needs to take an array of bytes and PIL doesn't natively
-        # store images in 18-bit 666 RGB format.
-        pixelbytes = list(self.image_to_data(image, self._rotation))
-        # Write data to hardware.
-        for i in range(0, len(pixelbytes), 4096):
-            self.data(pixelbytes[i:i + 4096])
+      #self.data(image.tobytes())
+
+      img = np.asarray(image.convert('RGB'))
+      pix = np.zeros((w, h, 2), dtype=np.uint8)
+      pix[...,[0]] = np.add(np.bitwise_and(img[...,[0]], 0xF8), np.right_shift(img[...,[1]], 5))
+      pix[...,[1]] = np.add(np.bitwise_and(np.left_shift(img[...,[1]], 3), 0xE0), np.right_shift(img[...,[2]], 3))
+      pix = pix.flatten().tolist()
+      print(pix)
+
+      self.data(pix)
 
     def image_to_data(self, image, rotation=0):
         """Generator function to convert a PIL image to 16-bit 565 RGB bytes."""
