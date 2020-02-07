@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 import sys
-
+import time
 from PIL import Image
 import ST7789 as ST7789
 from pyA20.spi import spi
@@ -35,17 +35,12 @@ RST = port.PI13
 # LED : nothing.
 LED = port.PI21
 
-SPI_PORT = 0
-SPI_DEVICE = 0
-SPI_MODE = 0b11
-SPI_SPEED_HZ = 1000000
-
 # Default HZ:
 # 1000000
 # Maximum HZ:
 # 40000000
 
-spi.open("/dev/spidev2.0", mode=3, delay=0, bits_per_word=8, speed=SPI_SPEED_HZ)
+spi.open("/dev/spidev2.0", mode=3, delay=0, bits_per_word=8, speed=100000)
 
 # Create ST7789 LCD display class.
 disp = ST7789.ST7789(spi=spi,
@@ -67,4 +62,4 @@ image = image.resize((WIDTH, HEIGHT))
 # Draw the image on the display hardware.
 print('Drawing image')
 
-disp.display(image)
+#disp.display(image)

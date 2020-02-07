@@ -146,7 +146,7 @@ class ST7789(object):
         self.reset()
         self._init()
 
-    def send(self, data, is_data=True, chunk_size=63):
+    def send(self, data, is_data=True, chunk_size=69):
         """Write a byte or array of bytes to the display. Is_data parameter
         controls if byte should be interpreted as display data (True) or command
         data (False).  Chunk_size is an optional size of bytes to write in a
@@ -209,7 +209,6 @@ class ST7789(object):
         time.sleep(0.020)
 
         # MadCTL
-        madctl = ST7789_MADCTL
         self.command(0x36)
         self.data(0x70)
         time.sleep(0.010)
@@ -226,9 +225,9 @@ class ST7789(object):
         self.command(0x13)
 
         # Swap Addresse
-        self.command(0x37)
-        self.data(0)
-        self.data(320-240)
+        #self.command(0x37)
+        #self.data(0)
+        #self.data(320-240)
 
 
         self.command(ST7789_DISPON)     # Display on
