@@ -146,7 +146,7 @@ class ST7789(object):
         self.reset()
         self._init()
 
-    def send(self, data, is_data=True, chunk_size=8):
+    def send(self, data, is_data=True, chunk_size=60):
         """Write a byte or array of bytes to the display. Is_data parameter
         controls if byte should be interpreted as display data (True) or command
         data (False).  Chunk_size is an optional size of bytes to write in a
@@ -200,7 +200,7 @@ class ST7789(object):
         # Initialize the display.
 
         #self.command(ST7789_SWRESET)    # Software reset
-        #time.sleep(0.150)               # delay 150 ms
+        time.sleep(0.150)               # delay 150 ms
 
         self.command(ST7789_MADCTL)
         self.data(0x70)
@@ -237,45 +237,13 @@ class ST7789(object):
         self.data(0xA4)
         self.data(0xA1)
 
-        self.command(ST7789_FRCTRL2)
-        self.data(0x0F)
+        #self.command(ST7789_FRCTRL2)
+        #self.data(0x0F)
 
-        self.command(ST7789_GMCTRP1)    # Set Gamma
-        self.data(0xD0)
-        self.data(0x04)
-        self.data(0x0D)
-        self.data(0x11)
-        self.data(0x13)
-        self.data(0x2B)
-        self.data(0x3F)
-        self.data(0x54)
-        self.data(0x4C)
-        self.data(0x18)
-        self.data(0x0D)
-        self.data(0x0B)
-        self.data(0x1F)
-        self.data(0x23)
-
-        self.command(ST7789_GMCTRN1)    # Set Gamma
-        self.data(0xD0)
-        self.data(0x04)
-        self.data(0x0C)
-        self.data(0x11)
-        self.data(0x13)
-        self.data(0x2C)
-        self.data(0x3F)
-        self.data(0x44)
-        self.data(0x51)
-        self.data(0x2F)
-        self.data(0x1F)
-        self.data(0x1F)
-        self.data(0x20)
-        self.data(0x23)
-
-        if self._invert:
-            self.command(ST7789_INVON)   # Invert display
-        else:
-            self.command(ST7789_INVOFF)  # Don't invert display
+        #if self._invert:
+            #self.command(ST7789_INVON)   # Invert display
+        #else:
+            #self.command(ST7789_INVOFF)  # Don't invert display
 
         self.command(ST7789_SLPOUT)
 
