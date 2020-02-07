@@ -146,7 +146,7 @@ class ST7789(object):
         self.reset()
         self._init()
 
-    def send(self, data, is_data=True, chunk_size=60):
+    def send(self, data, is_data=True, chunk_size=63):
         """Write a byte or array of bytes to the display. Is_data parameter
         controls if byte should be interpreted as display data (True) or command
         data (False).  Chunk_size is an optional size of bytes to write in a
@@ -157,6 +157,8 @@ class ST7789(object):
             self._gpio.output(self._dc, 1)
         else:
             self._gpio.output(self._dc, 0)
+        # time.sleep(0.01)
+
         # Convert scalar argument to list so either can be passed as parameter.
         if isinstance(data, numbers.Number):
             data = [data & 0xFF]
@@ -196,32 +198,41 @@ class ST7789(object):
             self._gpio.output(self._rst, 1)
             time.sleep(0.100)
 
-    def SPI_TRANSFER(self,arg1, *argv):
-        self.command(arg1)  # Column addr set
-        for arg in argv:
-            self.data(arg)
-
-
-
     def _init(self):
-        self.SPI_TRANSFER(0xB2, 0xc, 0xc, 0, 0x33, 0x33)
-        self.SPI_TRANSFER(0xB7, 0x35)
-        self.SPI_TRANSFER(0xBb, 0x19)
-        self.SPI_TRANSFER(0xc0, 0x2c)
-        self.SPI_TRANSFER(0xc2, 0x01)
-        self.SPI_TRANSFER(0xc3, 0x12)
-        self.SPI_TRANSFER(0xc4, 0x20)
-        self.SPI_TRANSFER(0xc6, 0x0f)
-        self.SPI_TRANSFER(0xd0, 0xa4, 0xa1)
-        self.SPI_TRANSFER(0xe0, 0xd0, 0x04, 0x0d, 0x11, 0x13, 0x2b, 0x3f, 0x54, 0x4c, 0x18, 0x0d, 0x0b, 0x1f, 0x23)
-        self.SPI_TRANSFER(0xe1, 0xd0, 0x04, 0x0c, 0x11, 0x13, 0x2c, 0x3f, 0x44, 0x51, 0x2f, 0x1f, 0x1f, 0x20, 0x23)
-        self.SPI_TRANSFER(0x21)
-        self.SPI_TRANSFER(0x11)
-        self.SPI_TRANSFER(0x29)
-        time.sleep( 1)
+        # Initialize the display.
+         # Sleep Out Command
+        self.command(0x11)
+        time.sleep(0.120)
+        # COLMOD: Pixel Format Set
+        self.command(0x3A)
+        self.data(0x05)
+        time.sleep(0.020)
+
+        # MadCTL
+        madctl = ST7789_MADCTL
+        self.command(0x36)
+        self.data(0x70)
+        time.sleep(0.010)
+
+        # Enable Gamma:
+        self.command(0xBA)
+        self.data(0x04)
+        time.sleep(0.010)
+
+        # Invert Colors:
+        self.command(0x21)
+
+        # Partial off:
+        self.command(0x13)
+
+        # Swap Addresse
+        self.command(0x37)
+        self.data(0)
+        self.data(320-240)
 
 
-
+        self.command(ST7789_DISPON)     # Display on
+        time.sleep(0.100)               # 100 ms
 
     def begin(self):
         """Set up the display
