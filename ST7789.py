@@ -1,37 +1,41 @@
-import spidev
-import RPi.GPIO as GPIO
+
 import time
 import numpy as np
-
-
+from pyA20.spi import spi
+from pyA20.gpio import port
+from pyA20.gpio import gpio
 class ST7789(object):
     """class for ST7789  240*240 1.3inch OLED displays."""
 
-    def __init__(self,spi,rst = 27,dc = 25,bl = 24):
+    def __init__(self):
+
+
         self.width = 240
         self.height = 240
         #Initialize DC RST pin
-        self._dc = dc
-        self._rst = rst
-        self._bl = bl
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
-        GPIO.setup(self._dc,GPIO.OUT)
-        GPIO.setup(self._rst,GPIO.OUT)
-        GPIO.setup(self._bl,GPIO.OUT)
-        GPIO.output(self._bl, GPIO.HIGH)
+        self._dc = port.PI12
+        self._rst = port.PI13
+        self._gpio = gpio
+
+        self._gpio.init()
+        self._gpio.setcfg(self._dc, gpio.OUTPUT)
+        self._gpio.setcfg(self._rst, gpio.OUTPUT)
+        self._gpio.output(self._rst, 1)
+        self._gpio.output(self._dc, 1)
+
+        spi.open("/dev/spidev2.0", mode=3, delay=0, bits_per_word=8, speed=100000)
         #Initialize SPI
         self._spi = spi
-        self._spi.max_speed_hz = 40000000
+
 
     """    Write register address and data     """
     def command(self, cmd):
-        GPIO.output(self._dc, GPIO.LOW)
-        self._spi.writebytes([cmd])
+        self._gpio.output(self._dc, 0)
+        self.writeSpi([cmd])
 
     def data(self, val):
-        GPIO.output(self._dc, GPIO.HIGH)
-        self._spi.writebytes([val])
+        self._gpio.output(self._dc, 1)
+        self.writeSpi([val])
 
     def Init(self):
         """Initialize dispaly"""    
@@ -115,11 +119,11 @@ class ST7789(object):
 
     def reset(self):
         """Reset the display"""
-        GPIO.output(self._rst,GPIO.HIGH)
+        self._gpio.output(self._rst, 1)
         time.sleep(0.01)
-        GPIO.output(self._rst,GPIO.LOW)
+        self._gpio.output(self._rst, 0)
         time.sleep(0.01)
-        GPIO.output(self._rst,GPIO.HIGH)
+        self._gpio.output(self._rst, 1)
         time.sleep(0.01)
         
     def SetWindows(self, Xstart, Ystart, Xend, Yend):
@@ -137,7 +141,13 @@ class ST7789(object):
         self.data(0x00)
         self.data((Yend - 1) & 0xff )
 
-        self.command(0x2C)    
+        self.command(0x2C)
+
+    def writeSpi(self, data):
+        chunk_size=60
+        for start in range(0, len(data), chunk_size):
+            end = min(start + chunk_size, len(data))
+            self._spi.write(data[start:end])
     
     def ShowImage(self,Image,Xstart,Ystart):
         """Set buffer to value of Python Imaging Library image."""
@@ -152,14 +162,14 @@ class ST7789(object):
         pix[...,[1]] = np.add(np.bitwise_and(np.left_shift(img[...,[1]],3),0xE0),np.right_shift(img[...,[2]],3))
         pix = pix.flatten().tolist()
         self.SetWindows ( 0, 0, self.width, self.height)
-        GPIO.output(self._dc,GPIO.HIGH)
+        self._gpio.output(self._dc, 1)
         for i in range(0,len(pix),4096):
-            self._spi.writebytes(pix[i:i+4096])		
+            self.writeSpi(pix[i:i+4096])
         
     def clear(self):
         """Clear contents of image buffer"""
         _buffer = [0xff]*(self.width * self.height * 2)
         self.SetWindows ( 0, 0, self.width, self.height)
-        GPIO.output(self._dc,GPIO.HIGH)
+        self._gpio.output(self._dc, 1)
         for i in range(0,len(_buffer),4096):
-            self._spi.writebytes(_buffer[i:i+4096])		
+            self.writeSpi(_buffer[i:i+4096])
