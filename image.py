@@ -29,9 +29,9 @@ from pyA20.gpio import port
 image_file = "cat.jpg"
 
 # DC = UEXT3 / PI20
-DC  = port.PI20
-# RST = UEX4 / PI21
-RST = port.PI21
+DC  = port.PI12
+# RST = UEX4 / PI21 - Gelb
+RST = port.PI13
 # LED : nothing.
 LED = port.PI21
 
@@ -45,11 +45,11 @@ SPI_SPEED_HZ = 40000000
 # Maximum HZ:
 # 40000000
 
-spi.open("/dev/spidev1.0", mode=0, delay=0, bits_per_word=8, speed=SPI_SPEED_HZ)
+spi.open("/dev/spidev2.0", mode=3, delay=0, bits_per_word=8, speed=SPI_SPEED_HZ)
 
 # Create ST7789 LCD display class.
 disp = ST7789.ST7789(spi=spi,
-       mode=SPI_MODE, rst=RST, dc=DC, led=LED)
+        rst=RST, dc=DC)
 
 WIDTH = disp.width
 HEIGHT = disp.height
