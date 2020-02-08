@@ -15,7 +15,7 @@ param_spidev_spi_bus=2
 param_spidev_max_freq=40000000
 ```
 
-5. Wire the Display to UEXT1
+5. Wire the Display to UEXT1: https://www.olimex.com/wiki/images/a/a9/Example.jpg
 5. Install following Software:
 ```angular2
 apt-get install python python-numpy python-pip python-setuptools python-dev python-pil
@@ -23,3 +23,4 @@ pip install pyA20
 ```
 
 6. Run main.py
+
