@@ -136,13 +136,13 @@ static struct drm_driver st7789r_driver = {
 };
 
 static const struct of_device_id st7789r_of_match[] = {
-	{ .compatible = "jianda,jd-t18003-t01" },
+	{ .compatible = "sitronix,st7789R" },
 	{ },
 };
 MODULE_DEVICE_TABLE(of, st7789r_of_match);
 
 static const struct spi_device_id st7789r_id[] = {
-	{ "jd-t18003-t01", 0 },
+	{ "st7789R", 0 },
 	{ },
 };
 MODULE_DEVICE_TABLE(spi, st7789r_id);
