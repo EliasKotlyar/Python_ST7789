@@ -1,0 +1,11 @@
+
+
+wget https://github.com/armbian/sunxi-DT-overlays/blob/master/sun7i-a20/sun7i-a20-spi2.dts
+dtc -I dts -O dtb -o /boot/dtb/overlay/sun7i-a20-spi2.dtbo /boot/dtb/overlay/sun7i-a20-spi2.dts
+
+
+
+dtc -I dtb -O dts -o /boot/dtb/sun7i-a20-olinuxino-micro.dts /boot/dtb/sun7i-a20-olinuxino-micro.dtb
+dtc -I dtb -O dts -o /boot/dtb/sun7i-a20-olinuxino-micro-emmc.dts /boot/dtb/sun7i-a20-olinuxino-micro-emmc.dtb
+
+dtc -I dts -O dtb -o /boot/dtb/sun7i-a20-olinuxino-micro-emmc.dtb /boot/dtb/sun7i-a20-olinuxino-micro-emmc.dts

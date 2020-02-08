@@ -23,7 +23,11 @@ class ST7789(object):
         self._gpio.output(self._rst, 1)
         self._gpio.output(self._dc, 1)
 
-        spi.open("/dev/spidev2.0", mode=3, delay=0, bits_per_word=8, speed=100000)
+        speed = 100000 # 0.1 mhz
+        speed = 4000000 # 4mhz
+
+
+        spi.open("/dev/spidev2.0", mode=3, delay=0, bits_per_word=8, speed=speed)
         #Initialize SPI
         self._spi = spi
 

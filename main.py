@@ -17,8 +17,11 @@ disp = ST7789.ST7789()
 disp.Init()
 
 # Clear display.
-disp.clear()
+#disp.clear()
 
 # Create blank image for drawing.
 image = Image.open('pic.jpg')
-disp.ShowImage(image,0,0)
+image = image.rotate(180)
+
+while 1:
+    disp.ShowImage(image,0,0)
