@@ -52,55 +52,38 @@ static void jd_t18003_t01_pipe_enable(struct drm_simple_display_pipe *pipe,
 
 	DRM_DEBUG_KMS("\n");
 
-	ret = mipi_dbi_poweron_reset(dbidev);
-	if (ret)
-		goto out_exit;
 
-	msleep(150);
+        mipi_dbi_command(dbi,0x36, 0x70); 
 
-	mipi_dbi_command(dbi, MIPI_DCS_EXIT_SLEEP_MODE);
-	msleep(500);
+        mipi_dbi_command(dbi,0x3A,0x05);
 
-	mipi_dbi_command(dbi, st7789R_FRMCTR1, 0x01, 0x2c, 0x2d);
-	mipi_dbi_command(dbi, st7789R_FRMCTR2, 0x01, 0x2c, 0x2d);
-	mipi_dbi_command(dbi, st7789R_FRMCTR3, 0x01, 0x2c, 0x2d, 0x01, 0x2c,
-			 0x2d);
-	mipi_dbi_command(dbi, st7789R_INVCTR, 0x07);
-	mipi_dbi_command(dbi, st7789R_PWCTR1, 0xa2, 0x02, 0x84);
-	mipi_dbi_command(dbi, st7789R_PWCTR2, 0xc5);
-	mipi_dbi_command(dbi, st7789R_PWCTR3, 0x0a, 0x00);
-	mipi_dbi_command(dbi, st7789R_PWCTR4, 0x8a, 0x2a);
-	mipi_dbi_command(dbi, st7789R_PWCTR5, 0x8a, 0xee);
-	mipi_dbi_command(dbi, st7789R_VMCTR1, 0x0e);
-	mipi_dbi_command(dbi, MIPI_DCS_EXIT_INVERT_MODE);
-	switch (dbidev->rotation) {
-	default:
-		addr_mode = st7789R_MX | st7789R_MY;
-		break;
-	case 90:
-		addr_mode = st7789R_MX | st7789R_MV;
-		break;
-	case 180:
-		addr_mode = 0;
-		break;
-	case 270:
-		addr_mode = st7789R_MY | st7789R_MV;
-		break;
-	}
-	mipi_dbi_command(dbi, MIPI_DCS_SET_ADDRESS_MODE, addr_mode);
-	mipi_dbi_command(dbi, MIPI_DCS_SET_PIXEL_FORMAT,
-			 MIPI_DCS_PIXEL_FMT_16BIT);
-	mipi_dbi_command(dbi, st7789R_GAMCTRP1, 0x02, 0x1c, 0x07, 0x12, 0x37,
-			 0x32, 0x29, 0x2d, 0x29, 0x25, 0x2b, 0x39, 0x00, 0x01,
-			 0x03, 0x10);
-	mipi_dbi_command(dbi, st7789R_GAMCTRN1, 0x03, 0x1d, 0x07, 0x06, 0x2e,
-			 0x2c, 0x29, 0x2d, 0x2e, 0x2e, 0x37, 0x3f, 0x00, 0x00,
-			 0x02, 0x10);
-	mipi_dbi_command(dbi, MIPI_DCS_SET_DISPLAY_ON);
+        mipi_dbi_command(dbi,0xB2,0x0C,0x0C,0x00,0x33,0x33);
 
-	msleep(100);
+        mipi_dbi_command(dbi,0xB7,0x35);
 
-	mipi_dbi_command(dbi, MIPI_DCS_ENTER_NORMAL_MODE);
+        mipi_dbi_command(dbi,0xBB,0x19);
+
+        mipi_dbi_command(dbi,0xC0,0x2C);
+
+        mipi_dbi_command(dbi,0xC2,0x01);
+
+        mipi_dbi_command(dbi,0xC3,0x12);
+
+        mipi_dbi_command(dbi,0xC4,0x20);
+
+        mipi_dbi_command(dbi,0xC6,0x0F);
+
+        mipi_dbi_command(dbi,0xD0,0xA4,0xA1);
+
+        mipi_dbi_command(dbi,0xE0,0xD0,0x04,0x0D,0x11,0x13,0x2B,0x3F,0x54,0x4C,0x18,0x0D,0x0B,0x1F,0x23);
+
+        mipi_dbi_command(dbi,0xE1,0xD0,0x04,0x0C,0x11,0x13,0x2C,0x3F,0x44,0x51,0x2F,0x1F,0x1F,0x20,0x23);
+
+        mipi_dbi_command(dbi,0x21);
+
+        mipi_dbi_command(dbi,0x11);
+
+        mipi_dbi_command(dbi,0x29);
 
 	msleep(20);
 
