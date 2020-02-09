@@ -4,7 +4,10 @@
 / {
 	compatible = "allwinner,sun7i-a20";
 
-	fragment@0 {
+
+
+
+	fragment@1 {
 		target = <&spi2>;
 		__overlay__ {
 			status = "okay";
@@ -19,7 +22,7 @@
 		};
 	};
 
-	fragment@1 {
+	fragment@2 {
 		target = <&spi2>;
 		__overlay__ {
 			/* needed to avoid dtc warning */
@@ -30,8 +33,8 @@
                 compatible = "sitronix,st7789R";
                 reg = <0>;
                 spi-max-frequency = <32000000>;
-                dc-gpios = <&gpio PI12 GPIO_ACTIVE_HIGH>;
-                reset-gpios = <&gpio PI13 GPIO_ACTIVE_HIGH>;
+                dc-gpios = <&pio 8 12 0>;    /* PI12 */
+                reset-gpios = <&pio 8 13 0>; /* PI13 */
                 rotation = <0>;
 	        };
 
@@ -39,8 +42,5 @@
 		};
 	};
 
-	__overrides__ {
-		speed =    <&keidei>, "spi-max-frequency:0";
-		rotation = <&keidei>, "rotation:0";
-	};
+
 };
