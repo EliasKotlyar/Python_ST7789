@@ -51,72 +51,29 @@ class ST7789(object):
 
         self.SPI_TRANSFER(0x36, 0x70)  # self.data(0x00)
 
-        self.SPI_TRANSFER(0x3A,
-                          0x05)
+        self.SPI_TRANSFER(0x3A,0x05)
 
-        self.SPI_TRANSFER(0xB2,
-                          0x0C,
-                          0x0C,
-                          0x00,
-                          0x33,
-                          0x33)
+        self.SPI_TRANSFER(0xB2,0x0C,0x0C,0x00,0x33,0x33)
 
-        self.SPI_TRANSFER(0xB7,
-                          0x35)
+        self.SPI_TRANSFER(0xB7,0x35)
 
-        self.SPI_TRANSFER(0xBB,
-                          0x19)
+        self.SPI_TRANSFER(0xBB,0x19)
 
-        self.SPI_TRANSFER(0xC0,
-                          0x2C)
+        self.SPI_TRANSFER(0xC0,0x2C)
 
-        self.SPI_TRANSFER(0xC2,
-                          0x01)
+        self.SPI_TRANSFER(0xC2,0x01)
 
-        self.SPI_TRANSFER(0xC3,
-                          0x12)
+        self.SPI_TRANSFER(0xC3,0x12)
 
-        self.SPI_TRANSFER(0xC4,
-                          0x20)
+        self.SPI_TRANSFER(0xC4,0x20)
 
-        self.SPI_TRANSFER(0xC6,
-                          0x0F)
+        self.SPI_TRANSFER(0xC6,0x0F)
 
-        self.SPI_TRANSFER(0xD0,
-                          0xA4,
-                          0xA1)
+        self.SPI_TRANSFER(0xD0,0xA4,0xA1)
 
-        self.SPI_TRANSFER(0xE0,
-                          0xD0,
-                          0x04,
-                          0x0D,
-                          0x11,
-                          0x13,
-                          0x2B,
-                          0x3F,
-                          0x54,
-                          0x4C,
-                          0x18,
-                          0x0D,
-                          0x0B,
-                          0x1F,
-                          0x23)
+        self.SPI_TRANSFER(0xE0,0xD0,0x04,0x0D,0x11,0x13,0x2B,0x3F,0x54,0x4C,0x18,0x0D,0x0B,0x1F,0x23)
 
-        self.SPI_TRANSFER(0xE1,
-                          0xD0,
-                          0x04,
-                          0x0C,
-                          0x11,
-                          0x13,
-                          0x2C,
-                          0x3F,
-                          0x44,
-                          0x51,
-                          0x2F,
-                          0x1F,
-                          0x1F,
-                          0x20,
-                          0x23)
+        self.SPI_TRANSFER(0xE1,0xD0,0x04,0x0C,0x11,0x13,0x2C,0x3F,0x44,0x51,0x2F,0x1F,0x1F,0x20,0x23)
 
         self.SPI_TRANSFER(0x21)
 
