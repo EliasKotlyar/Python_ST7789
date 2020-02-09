@@ -173,6 +173,7 @@ static int st7789r_probe(struct spi_device *spi)
 	device_property_read_u32(dev, "rotation", &rotation);
 
 	ret = mipi_dbi_spi_init(spi, dbi, dc);
+	spi->mode = SPI_MODE_3;
 	if (ret)
 		return ret;
 
