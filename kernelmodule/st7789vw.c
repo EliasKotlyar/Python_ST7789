@@ -51,7 +51,9 @@ static void jd_t18003_t01_pipe_enable(struct drm_simple_display_pipe *pipe,
 		return;
 
 	DRM_DEBUG_KMS("\n");
-
+	ret = mipi_dbi_poweron_reset(dbidev);
+	if (ret)
+		goto out_exit;
 
         mipi_dbi_command(dbi,0x36, 0x70); 
 
