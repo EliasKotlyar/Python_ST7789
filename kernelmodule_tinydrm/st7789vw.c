@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0+
 /*
- * DRM driver for Sitronix st7789R panels
+ * DRM driver for Sitronix ST7789VW panels
  *
  * Based on Code from David Lechner <david@lechnology.com>
  */
@@ -21,22 +21,22 @@
 #include <drm/drm_gem_framebuffer_helper.h>
 #include <drm/drm_mipi_dbi.h>
 
-#define st7789R_FRMCTR1		0xb1
-#define st7789R_FRMCTR2		0xb2
-#define st7789R_FRMCTR3		0xb3
-#define st7789R_INVCTR		0xb4
-#define st7789R_PWCTR1		0xc0
-#define st7789R_PWCTR2		0xc1
-#define st7789R_PWCTR3		0xc2
-#define st7789R_PWCTR4		0xc3
-#define st7789R_PWCTR5		0xc4
-#define st7789R_VMCTR1		0xc5
-#define st7789R_GAMCTRP1	0xe0
-#define st7789R_GAMCTRN1	0xe1
+#define ST7789VW_FRMCTR1		0xb1
+#define ST7789VW_FRMCTR2		0xb2
+#define ST7789VW_FRMCTR3		0xb3
+#define ST7789VW_INVCTR		0xb4
+#define ST7789VW_PWCTR1		0xc0
+#define ST7789VW_PWCTR2		0xc1
+#define ST7789VW_PWCTR3		0xc2
+#define ST7789VW_PWCTR4		0xc3
+#define ST7789VW_PWCTR5		0xc4
+#define ST7789VW_VMCTR1		0xc5
+#define ST7789VW_GAMCTRP1	0xe0
+#define ST7789VW_GAMCTRN1	0xe1
 
-#define st7789R_MY	BIT(7)
-#define st7789R_MX	BIT(6)
-#define st7789R_MV	BIT(5)
+#define ST7789VW_MY	BIT(7)
+#define ST7789VW_MX	BIT(6)
+#define ST7789VW_MV	BIT(5)
 
 static void jd_t18003_t01_pipe_enable(struct drm_simple_display_pipe *pipe,
 				      struct drm_crtc_state *crtc_state,
@@ -105,34 +105,34 @@ static const struct drm_display_mode jd_t18003_t01_mode = {
 	DRM_SIMPLE_MODE(240, 240, 20, 20),
 };
 
-DEFINE_DRM_GEM_CMA_FOPS(st7789r_fops);
+DEFINE_DRM_GEM_CMA_FOPS(ST7789VW_fops);
 
-static struct drm_driver st7789r_driver = {
+static struct drm_driver ST7789VW_driver = {
 	.driver_features	= DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC,
-	.fops			= &st7789r_fops,
+	.fops			= &ST7789VW_fops,
 	.release		= mipi_dbi_release,
 	DRM_GEM_CMA_VMAP_DRIVER_OPS,
 	.debugfs_init		= mipi_dbi_debugfs_init,
-	.name			= "st7789r",
-	.desc			= "Sitronix st7789R",
+	.name			= "ST7789VW",
+	.desc			= "Sitronix ST7789VW",
 	.date			= "20171128",
 	.major			= 1,
 	.minor			= 0,
 };
 
-static const struct of_device_id st7789r_of_match[] = {
-	{ .compatible = "sitronix,st7789R" },
+static const struct of_device_id ST7789VW_of_match[] = {
+	{ .compatible = "sitronix,ST7789VW" },
+	{ .compatible = "waveshare,1.3-lcd-hat"},
+};
+MODULE_DEVICE_TABLE(of, ST7789VW_of_match);
+
+static const struct spi_device_id ST7789VW_id[] = {
+	{ "ST7789VW", 0 },
 	{ },
 };
-MODULE_DEVICE_TABLE(of, st7789r_of_match);
+MODULE_DEVICE_TABLE(spi, ST7789VW_id);
 
-static const struct spi_device_id st7789r_id[] = {
-	{ "st7789R", 0 },
-	{ },
-};
-MODULE_DEVICE_TABLE(spi, st7789r_id);
-
-static int st7789r_probe(struct spi_device *spi)
+static int ST7789VW_probe(struct spi_device *spi)
 {
 	struct device *dev = &spi->dev;
 	struct mipi_dbi_dev *dbidev;
@@ -148,7 +148,7 @@ static int st7789r_probe(struct spi_device *spi)
 
 	dbi = &dbidev->dbi;
 	drm = &dbidev->drm;
-	ret = devm_drm_dev_init(dev, drm, &st7789r_driver);
+	ret = devm_drm_dev_init(dev, drm, &ST7789VW_driver);
 	if (ret) {
 		kfree(dbidev);
 		return ret;
@@ -199,7 +199,7 @@ static int st7789r_probe(struct spi_device *spi)
 	return 0;
 }
 
-static int st7789r_remove(struct spi_device *spi)
+static int ST7789VW_remove(struct spi_device *spi)
 {
 	struct drm_device *drm = spi_get_drvdata(spi);
 
@@ -209,23 +209,23 @@ static int st7789r_remove(struct spi_device *spi)
 	return 0;
 }
 
-static void st7789r_shutdown(struct spi_device *spi)
+static void ST7789VW_shutdown(struct spi_device *spi)
 {
 	drm_atomic_helper_shutdown(spi_get_drvdata(spi));
 }
 
-static struct spi_driver st7789r_spi_driver = {
+static struct spi_driver ST7789VW_spi_driver = {
 	.driver = {
 		.name = "st7789vw",
 		.owner = THIS_MODULE,
-		.of_match_table = st7789r_of_match,
+		.of_match_table = ST7789VW_of_match,
 	},
-	.id_table = st7789r_id,
-	.probe = st7789r_probe,
-	.remove = st7789r_remove,
-	.shutdown = st7789r_shutdown,
+	.id_table = ST7789VW_id,
+	.probe = ST7789VW_probe,
+	.remove = ST7789VW_remove,
+	.shutdown = ST7789VW_shutdown,
 };
-module_spi_driver(st7789r_spi_driver);
+module_spi_driver(ST7789VW_spi_driver);
 
 MODULE_DESCRIPTION("Sitronix ST7789VW DRM driver");
 MODULE_AUTHOR("Elias Kotlyar <elias.kotlyar@gmail.com");
