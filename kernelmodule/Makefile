@@ -1,13 +1,11 @@
 obj-m += st7789vw_fb.o olimexino_st7789vw.o
 
-#BUILD_DIR=/lib/module/$(shell uname -r)/build
-BUILD_DIR = ~/rpi/kernel/linux
-
+KBUILD=/lib/modules/$(shell uname -r)/build/
 modules:
-	make -C $(BUILD_DIR) M=$(PWD) modules
+	make -C $(KBUILD) M=$(PWD) modules
 
 modules_install:
-	make -C $(BUILD_DIR) M=$(PWD) modules_install
+	make -C $(KBUILD) M=$(PWD) modules_install
 
 clean:
-	make -C $(BUILD_DIR) M=$(PWD) clean
+	make -C $(KBUILD) M=$(PWD) clean

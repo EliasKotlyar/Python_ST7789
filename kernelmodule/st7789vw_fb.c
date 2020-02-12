@@ -23,7 +23,7 @@
 #include <linux/delay.h>
 #include <linux/uaccess.h>
 
-#include "st7789vwfb.h"
+#include "st7789vw_fb.h"
 
 static struct st7789vw_function st7789vw_cfg_script[] = {
 	{ st7789vw_START, st7789vw_START},
