@@ -25,105 +25,8 @@
 
 #include "st7789vw_fb.h"
 
-static struct st7789vw_function st7789vw_cfg_script[] = {
-	{ st7789vw_START, st7789vw_START},
-	{ st7789vw_CMD, st7789vw_SWRESET},
-	{ st7789vw_DELAY, 150},
-	{ st7789vw_CMD, st7789vw_SLPOUT},
-	{ st7789vw_DELAY, 500},
-	{ st7789vw_CMD, st7789vw_FRMCTR1},
-	{ st7789vw_DATA, 0x01},
-	{ st7789vw_DATA, 0x2c},
-	{ st7789vw_DATA, 0x2d},
-	{ st7789vw_CMD, st7789vw_FRMCTR2},
-	{ st7789vw_DATA, 0x01},
-	{ st7789vw_DATA, 0x2c},
-	{ st7789vw_DATA, 0x2d},
-	{ st7789vw_CMD, st7789vw_FRMCTR3},
-	{ st7789vw_DATA, 0x01},
-	{ st7789vw_DATA, 0x2c},
-	{ st7789vw_DATA, 0x2d},
-	{ st7789vw_DATA, 0x01},
-	{ st7789vw_DATA, 0x2c},
-	{ st7789vw_DATA, 0x2d},
-	{ st7789vw_CMD, st7789vw_INVCTR},
-	{ st7789vw_DATA, 0x07},
-	{ st7789vw_CMD, st7789vw_PWCTR1},
-	{ st7789vw_DATA, 0xa2},
-	{ st7789vw_DATA, 0x02},
-	{ st7789vw_DATA, 0x84},
-	{ st7789vw_CMD, st7789vw_PWCTR2},
-	{ st7789vw_DATA, 0xc5},
-	{ st7789vw_CMD, st7789vw_PWCTR3},
-	{ st7789vw_DATA, 0x0a},
-	{ st7789vw_DATA, 0x00},
-	{ st7789vw_CMD, st7789vw_PWCTR4},
-	{ st7789vw_DATA, 0x8a},
-	{ st7789vw_DATA, 0x2a},
-	{ st7789vw_CMD, st7789vw_PWCTR5},
-	{ st7789vw_DATA, 0x8a},
-	{ st7789vw_DATA, 0xee},
-	{ st7789vw_CMD, st7789vw_VMCTR1},
-	{ st7789vw_DATA, 0x0e},
-	{ st7789vw_CMD, st7789vw_INVOFF},
-	{ st7789vw_CMD, st7789vw_MADCTL},
-	{ st7789vw_DATA, 0xc8},
-	{ st7789vw_CMD, st7789vw_COLMOD},
-	{ st7789vw_DATA, 0x05},
-	{ st7789vw_CMD, st7789vw_CASET},
-	{ st7789vw_DATA, 0x00},
-	{ st7789vw_DATA, 0x00},
-	{ st7789vw_DATA, 0x00},
-	{ st7789vw_DATA, 0x00},
-	{ st7789vw_DATA, 0x7f},
-	{ st7789vw_CMD, st7789vw_RASET},
-	{ st7789vw_DATA, 0x00},
-	{ st7789vw_DATA, 0x00},
-	{ st7789vw_DATA, 0x00},
-	{ st7789vw_DATA, 0x00},
-	{ st7789vw_DATA, 0x9f},
-	{ st7789vw_CMD, st7789vw_GMCTRP1},
-	{ st7789vw_DATA, 0x02},
-	{ st7789vw_DATA, 0x1c},
-	{ st7789vw_DATA, 0x07},
-	{ st7789vw_DATA, 0x12},
-	{ st7789vw_DATA, 0x37},
-	{ st7789vw_DATA, 0x32},
-	{ st7789vw_DATA, 0x29},
-	{ st7789vw_DATA, 0x2d},
-	{ st7789vw_DATA, 0x29},
-	{ st7789vw_DATA, 0x25},
-	{ st7789vw_DATA, 0x2b},
-	{ st7789vw_DATA, 0x39},
-	{ st7789vw_DATA, 0x00},
-	{ st7789vw_DATA, 0x01},
-	{ st7789vw_DATA, 0x03},
-	{ st7789vw_DATA, 0x10},
-	{ st7789vw_CMD, st7789vw_GMCTRN1},
-	{ st7789vw_DATA, 0x03},
-	{ st7789vw_DATA, 0x1d},
-	{ st7789vw_DATA, 0x07},
-	{ st7789vw_DATA, 0x06},
-	{ st7789vw_DATA, 0x2e},
-	{ st7789vw_DATA, 0x2c},
-	{ st7789vw_DATA, 0x29},
-	{ st7789vw_DATA, 0x2d},
-	{ st7789vw_DATA, 0x2e},
-	{ st7789vw_DATA, 0x2e},
-	{ st7789vw_DATA, 0x37},
-	{ st7789vw_DATA, 0x3f},
-	{ st7789vw_DATA, 0x00},
-	{ st7789vw_DATA, 0x00},
-	{ st7789vw_DATA, 0x02},
-	{ st7789vw_DATA, 0x10},
-	{ st7789vw_CMD, st7789vw_DISPON},
-	{ st7789vw_DELAY, 100},
-	{ st7789vw_CMD, st7789vw_NORON},
-	{ st7789vw_DELAY, 10},
-	{ st7789vw_END, st7789vw_END},
-};
 
-static struct fb_fix_screeninfo st7789vwfb_fix __devinitdata = {
+static const struct fb_fix_screeninfo st7789vwfb_fix  = {
 	.id =		"st7789vw", 
 	.type =		FB_TYPE_PACKED_PIXELS,
 	.visual =	FB_VISUAL_PSEUDOCOLOR,
@@ -134,7 +37,7 @@ static struct fb_fix_screeninfo st7789vwfb_fix __devinitdata = {
 	.accel =	FB_ACCEL_NONE,
 };
 
-static struct fb_var_screeninfo st7789vwfb_var __devinitdata = {
+static const struct fb_var_screeninfo st7789vwfb_var = {
 	.xres =			WIDTH,
 	.yres =			HEIGHT,
 	.xres_virtual =		WIDTH,
@@ -188,32 +91,9 @@ static void st7789vw_write_cmd(struct st7789vwfb_par *par, u8 data)
 			par->info->fix.id, data, ret);
 }
 
-static void st7789vw_run_cfg_script(struct st7789vwfb_par *par)
+static void st7789vw_run_cfg_script(void)
 {
-	int i = 0;
-	int end_script = 0;
 
-	do {
-		switch (st7789vw_cfg_script[i].cmd)
-		{
-		case st7789vw_START:
-			break;
-		case st7789vw_CMD:
-			st7789vw_write_cmd(par,
-				st7789vw_cfg_script[i].data & 0xff);
-			break;
-		case st7789vw_DATA:
-			st7789vw_write_data(par,
-				st7789vw_cfg_script[i].data & 0xff);
-			break;
-		case st7789vw_DELAY:
-			mdelay(st7789vw_cfg_script[i].data);
-			break;
-		case st7789vw_END:
-			end_script = 1;
-		}
-		i++;
-	} while (!end_script);
 }
 
 static void st7789vw_set_addr_win(struct st7789vwfb_par *par,
@@ -296,7 +176,7 @@ static int st7789vwfb_init_display(struct st7789vwfb_par *par)
 
 	st7789vw_reset(par);
 
-	st7789vw_run_cfg_script(par);
+	st7789vw_run_cfg_script();
 
 	return 0;
 }
@@ -384,12 +264,12 @@ static struct fb_deferred_io st7789vwfb_defio = {
 	.deferred_io	= st7789vwfb_deferred_io,
 };
 
-static int __devinit st7789vwfb_probe (struct spi_device *spi)
+static int __init st7789vwfb_probe (struct spi_device *spi)
 {
 	int chip = spi_get_device_id(spi)->driver_data;
 	struct st7789vwfb_platform_data *pdata = spi->dev.platform_data;
 	int vmem_size = WIDTH*HEIGHT*BPP/8;
-	u8 *vmem;
+	u16 *vmem;
 	struct fb_info *info;
 	struct st7789vwfb_par *par;
 	int retval = -ENOMEM;
@@ -476,7 +356,7 @@ fballoc_fail:
 	return retval;
 }
 
-static int __devexit st7789vwfb_remove(struct spi_device *spi)
+static int  st7789vwfb_remove(struct spi_device *spi)
 {
 	struct fb_info *info = spi_get_drvdata(spi);
 
@@ -507,7 +387,7 @@ static struct spi_driver st7789vwfb_driver = {
 	},
 	.id_table = st7789vwfb_ids,
 	.probe  = st7789vwfb_probe,
-	.remove = __devexit_p(st7789vwfb_remove),
+	.remove = st7789vwfb_remove,
 };
 
 static int __init st7789vwfb_init(void)

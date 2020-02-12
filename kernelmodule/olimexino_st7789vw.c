@@ -1,6 +1,6 @@
 #include <linux/module.h>
 #include <linux/spi/spi.h>
-#include "st7735fb.h"
+#include "st7789vw_fb.h"
 
 #define SPI_BUS 	0
 #define SPI_BUS_CS1 	0
@@ -8,13 +8,13 @@
 
 const char this_driver_name[] = "adafruit_tft18";
 
-static struct st7735fb_platform_data st7735fb_data = {
+static struct st7789vw_fb_platform_data st7789vw_fb_data = {
        .rst_gpio       = 23,
        .dc_gpio        = 24,
 };
 
 
-static int __init add_st7735fb_device_to_bus(void)
+static int __init add_st7789vw_fb_device_to_bus(void)
 {
 	struct spi_master *spi_master;
 	struct spi_device *spi_device;
@@ -64,7 +64,7 @@ static int __init add_st7735fb_device_to_bus(void)
 			status = -1;
 		} 
 	} else {
-		spi_device->dev.platform_data = &st7735fb_data;
+		spi_device->dev.platform_data = &st7789vw_fb_data;
 		spi_device->max_speed_hz = SPI_BUS_SPEED;
 		spi_device->mode = SPI_MODE_3;
 		spi_device->bits_per_word = 8;
@@ -85,15 +85,15 @@ static int __init add_st7735fb_device_to_bus(void)
 
 	return status;
 }
-module_init(add_st7735fb_device_to_bus);
+module_init(add_st7789vw_fb_device_to_bus);
 
-static void __exit rpi_st7735fb_exit(void)
+static void __exit rpi_st7789vw_fb_exit(void)
 {
 }
-module_exit(rpi_st7735fb_exit);
+module_exit(rpi_st7789vw_fb_exit);
 
 MODULE_AUTHOR("Neil Greatorex");
-MODULE_DESCRIPTION("Bind SPI to st7735fb");
+MODULE_DESCRIPTION("Bind SPI to st7789vw_fb");
 MODULE_LICENSE("GPL");
 MODULE_VERSION("0.1");
 
