@@ -90,8 +90,22 @@ static void st7789vw_write_cmd(struct st7789vwfb_par *par, u8 data)
         pr_err("%s: write command %02x failed with status %d\n",
                par->info->fix.id, data, ret);
 }
+static void mipi_dbi_command_stackbuf(struct st7789vwfb_par *dbi, u8 cmd, u8 *data, size_t len) {
+    int i = 0;
+    st7789vw_write_cmd(dbi, cmd);
+    for(i = 0; i<len; i++) {
+        st7789vw_write_data(dbi, data[i]);
+    }
 
-static void st7789vw_run_cfg_script(void)
+}
+#define mipi_dbi_command(dbi, cmd, seq...) \
+({ \
+	u8 d[] = { seq }; \
+	mipi_dbi_command_stackbuf(dbi, cmd, d, ARRAY_SIZE(d)); \
+})
+
+
+static void st7789vw_run_cfg_script(struct st7789vwfb_par *dbi)
 {
     mipi_dbi_command(dbi,0x36, 0x70);
 
@@ -208,7 +222,7 @@ static int st7789vwfb_init_display(struct st7789vwfb_par *par)
 
     st7789vw_reset(par);
 
-    st7789vw_run_cfg_script();
+    st7789vw_run_cfg_script(par);
 
     return 0;
 }
